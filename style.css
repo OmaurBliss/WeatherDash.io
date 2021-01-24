@@ -1,0 +1,6 @@
+.jumbotron {
+    background-color: darkblue;
+    text-align: center;
+    color: white;
+    box-shadow: 0 40px 60px 0 rgba(28, 28, 28, 0.4);
+}
