@@ -2,12 +2,20 @@
     background-color: darkblue;
     text-align: center;
     color: white;
-    box-shadow: 0 40px 60px 0 rgba(28, 28, 28, 0.4);
+    box-shadow: 5px 5px 5px black;
 }
 #container {
-    float: center;
+    background-color: rgb(101, 168, 35);
+    color: white;
+    padding:40px;
+    margin-left: 100px;
+    width: 400px;
     border: 1px solid black;
     border-radius: 5px;
     display: inline-block;
     box-shadow: 0 40px 60px 0 rgba(28, 28, 28, 0.4);
+}
+#float {
+    float: left;
+   
 }

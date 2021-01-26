@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Weather Dashboard</title>
+  </head>
+  <body>
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Weather Dashboard</h1>
+        <p class="lead"></p>
+      </div>
+    </div>
+    
+    <nav id="float" class="navbar navbar-light bg-light">
+      <form class="form-inline">
+        <input
+        id="city"
+          class="form-control mr-sm-2"
+          type="search"
+          placeholder="Enter city"
+          aria-label="Search"
+        />
+        <button id="submitweather" class="btn btn-outline-success my-2 my-sm-0" data-weather="weather" type="submit">
+          Search
+        </button>
+        <span id="error"></span>
+      </form>
+    </nav>
+    <!-- Retrieved data will be dumped here -->
+    <!-- <div id="container">
+      <div class="row">
+        <div class="col-md-6">
+        <div class="city"></div>
+        <div class="wind"></div>
+        <div class="humidity"></div>
+        <div class="temp"></div>
+        <div class="image"></div>
+        <div class="description"></div>
+      </div>
+    </div> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+
+    
+$("#submitweather").click(function(){
+    var city = $("#city").val();
+
+    if (city != "");{
+        var APIKey = "166a433c57516f51dfab1f7edaed8413";
+        $.ajax({
+        url: "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial" + "&APPID=166a433c57516f51dfab1f7edaed8413",
+        method: "GET",
+         }) .then(function(response) {
+console.log(response);
+         });
+        
+         
+         
+    
+    // else {
+
+    //     $("#error").html("field cannot be empty");
+
+    // }
+
+
+  </script>
+  </body>
+</html>

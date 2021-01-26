@@ -24,7 +24,7 @@
         <p class="lead"></p>
       </div>
     </div>
-    <nav class="navbar navbar-light bg-light">
+    <nav id="float" class="navbar navbar-light bg-light">
       <form class="form-inline">
         <input
           class="form-control mr-sm-2"
@@ -32,7 +32,7 @@
           placeholder="Search"
           aria-label="Search"
         />
-        <button class="btn btn-outline-success my-2 my-sm-0" data-weather="weather" type="submit">
+        <button id="submitweather" class="btn btn-outline-success my-2 my-sm-0" data-weather="weather" type="submit">
           Search
         </button>
       </form>
@@ -40,22 +40,25 @@
     <!-- Retrieved data will be dumped here -->
     <div id="container">
       <div class="row">
-        <div class="col-md-6"></div>
+        <div class="col-md-6">
         <div class="city"></div>
         <div class="wind"></div>
         <div class="humidity"></div>
         <div class="temp"></div>
         <div class="image"></div>
+        <div class="description"></div>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
+
+
       // This is our API key. Add your own API key between the ""
       var APIKey = "166a433c57516f51dfab1f7edaed8413";
 
       // Here we are building the URL we need to query the database
       var queryURL =
-        "https://api.openweathermap.org/data/2.5/weather?q=Minneapolis,Minnesota&appid=" + APIKey;
+        "https://api.openweathermap.org/data/2.5/weather?q=Chicago,Illinois&appid=" + APIKey;
 
       // We then created an AJAX call
       $.ajax({
@@ -68,20 +71,39 @@
         console.log(response);
         // Create CODE HERE to calculate the temperature (converted from Kelvin)
         let mainTemp = response.main.temp;
-        let mainTempF = (mainTemp - 273) * 1.8 + 32 + " " + "degrees";
+        let mainTempF = "Temp:" + " " + (mainTemp - 273) * 1.8 + 32 + " " + "degrees";
 
         console.log(mainTemp);
         // Create CODE HERE to transfer content to HTML
-        let city = response.name;
+        let city ="City:" + " " + response.name;
         $(".city").text(city);
 
-        let wind = response.wind.speed + "mph";
+        let wind = "Wind:" + " " + response.wind.speed + "mph";
         $(".wind").text(wind);
 
-        let humidity = response.main.humidity;
+        let humidity = "Humidity:" + " " + response.main.humidity;
         $(".humidity").text(humidity);
 
         $(".temp").text(mainTempF);
+
+//weather icon
+        var image = $("<img>");
+        var weatherIcon = response.weather[0].icon;
+         var imageURL = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
+       image.attr("src", imageURL, "alt", "weather icon");
+       $(".image").append(image);
+
+       let Description = $("<p>");
+        let descriptionTag = response.weather[0].description;
+        Description.html(descriptionTag);
+        $(".description").append(Description);
+    ;
+        
+
+
+     
+
+        
 
         // Hint: To convert from Kelvin to Fahrenheit: F = (K - 273.15) * 1.80 + 32
         // Create CODE HERE to dump the temperature content into HTML
