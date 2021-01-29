@@ -9,6 +9,7 @@
     color: white;
     padding:40px;
     margin-left: 100px;
+    margin-bottom: 40px;
     width: 400px;
     border: 1px solid black;
     border-radius: 5px;
@@ -18,4 +19,7 @@
 #float {
     float: left;
    
+}
+#fivedayforcast {
+    text-align: center;
 }

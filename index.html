@@ -27,87 +27,150 @@
     <nav id="float" class="navbar navbar-light bg-light">
       <form class="form-inline">
         <input
+          id="citysearch"
           class="form-control mr-sm-2"
           type="search"
-          placeholder="Search"
+          placeholder="Search City"
           aria-label="Search"
         />
-        <button id="submitweather" class="btn btn-outline-success my-2 my-sm-0" data-weather="weather" type="submit">
+        <button
+          id="submitweather"
+          class="btn btn-outline-success my-2 my-sm-0"
+          data-weather="weather"
+          type="submit"
+        >
           Search
         </button>
+        <span id="error"></span>
       </form>
     </nav>
-    <!-- Retrieved data will be dumped here -->
-    <div id="container">
+    <!-- Current weather window -->
+    <section id="container">
       <div class="row">
         <div class="col-md-6">
-        <div class="city"></div>
-        <div class="wind"></div>
-        <div class="humidity"></div>
-        <div class="temp"></div>
-        <div class="image"></div>
-        <div class="description"></div>
+            <div class="date"></div>
+          <div class="city"></div>
+          <div class="wind"></div>
+          <div class="humidity"></div>
+          <div class="temp"></div>
+          <div class="image"></div>
+          <div class="description"></div>
+        </div>
       </div>
+    </section>
+
+    <div class="row">
+        <div class="col-12">
+            <h3 id="fivedayforcast">5-Day Forecast</h3>
+        </div>
     </div>
+    <div class="row">
+        <div id="dayone" class="col fiveday bg-primary text-white ml-3 mb-3 rounded"><p></p></div>
+        <div class="col fiveday bg-primary text-white ml-3 mb-3 rounded"></div>
+        <div class="col fiveday bg-primary text-white ml-3 mb-3 rounded"></div>
+        <div class="col fiveday bg-primary text-white ml-3 mb-3 rounded"></div>
+        <div class="col fiveday bg-primary text-white ml-3 mb-3 rounded"></div>
+    </div>
+</div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
+      $("#submitweather").click(function (event) {
+        event.preventDefault();
+        var citySearch = $("#citysearch").val();
+        if (citySearch != "") {
+         
+          // Here we are building the URL we need to query the database
+          var queryURL =
+            "https://api.openweathermap.org/data/2.5/weather?q=" +
+            citySearch +
+            "&units=imperial" +
+            "&APPID=166a433c57516f51dfab1f7edaed8413";
 
-
-      // This is our API key. Add your own API key between the ""
-      var APIKey = "166a433c57516f51dfab1f7edaed8413";
-
-      // Here we are building the URL we need to query the database
-      var queryURL =
-        "https://api.openweathermap.org/data/2.5/weather?q=Chicago,Illinois&appid=" + APIKey;
-
-      // We then created an AJAX call
-      $.ajax({
-        url: queryURL,
-        method: "GET",
-      }).then(function (response) {
-        // Create CODE HERE to Log the queryURL
-        console.log(queryURL);
-        // Create CODE HERE to log the resulting object
-        console.log(response);
-        // Create CODE HERE to calculate the temperature (converted from Kelvin)
-        let mainTemp = response.main.temp;
-        let mainTempF = "Temp:" + " " + (mainTemp - 273) * 1.8 + 32 + " " + "degrees";
-
-        console.log(mainTemp);
-        // Create CODE HERE to transfer content to HTML
-        let city ="City:" + " " + response.name;
-        $(".city").text(city);
-
-        let wind = "Wind:" + " " + response.wind.speed + "mph";
-        $(".wind").text(wind);
-
-        let humidity = "Humidity:" + " " + response.main.humidity;
-        $(".humidity").text(humidity);
-
-        $(".temp").text(mainTempF);
-
-//weather icon
-        var image = $("<img>");
-        var weatherIcon = response.weather[0].icon;
-         var imageURL = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png"
-       image.attr("src", imageURL, "alt", "weather icon");
-       $(".image").append(image);
-
-       let Description = $("<p>");
-        let descriptionTag = response.weather[0].description;
-        Description.html(descriptionTag);
-        $(".description").append(Description);
-    ;
-        
-
-
-     
+          
+          $.ajax({
+            url: queryURL,
+            method: "GET",
+          }).then(function (response) {
+          
+            console.log(queryURL);
+            const currentDate = new Date (response.dt*1000);
+            var day = currentDate.getDate();
+            var month = currentDate.getMonth() + 1;
+            var year = currentDate.getFullYear();
+            var dateHeader = month + "/" + day + "/" + year;
+            $(".date").text(dateHeader);
+            console.log(dateHeader);
 
         
+            let mainTemp = "Temp:" + " " + response.main.temp + " " + "F";
 
-        // Hint: To convert from Kelvin to Fahrenheit: F = (K - 273.15) * 1.80 + 32
-        // Create CODE HERE to dump the temperature content into HTML
+            console.log(mainTemp);
+            // Create CODE HERE to transfer content to HTML
+            let city = "City:" + " " + response.name;
+            $(".city").text(city);
+
+            let wind = "Wind:" + " " + response.wind.speed + "mph";
+            $(".wind").text(wind);
+
+            let humidity = "Humidity:" + " " + response.main.humidity;
+            $(".humidity").text(humidity);
+
+            $(".temp").text(mainTemp);
+
+            //weather icon
+            var image = $("<img>");
+            var weatherIcon = response.weather[0].icon;
+            var imageURL = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png";
+            image.attr("src", imageURL, "alt", "weather icon");
+            $(".image").append(image);
+            // weather description
+            let Description = $("<p>");
+            let descriptionTag = response.weather[0].description;
+            Description.html(descriptionTag);
+            $(".description").append(Description);
+            fiveDay(citySearch);
+            // }else {
+            // $("#error").html(" field cannot be empty");
+            // })
+          });
+        }
       });
+      function fiveDay(citySearch) {
+        var queryFiveDayURL =
+          "https://api.openweathermap.org/data/2.5/forecast?q=" +
+          citySearch +
+          "&units=imperial" +
+          "&APPID=166a433c57516f51dfab1f7edaed8413";
+
+        $.ajax({
+          url: queryFiveDayURL,
+          method: "GET",
+        }).then(function (response) {
+        //   console.log(response.list[10].main.temp);
+         //console.log(response.list[7].wind.speed);
+         //console.log(response.list[7].weather[0].description);
+         //console.log(response.list[7].weather[0].icon);
+        //  let dayOne =
+        // console.log(response.list[0].dt);
+        // currentDate = new Date (response.list[0].dt*1000);
+        //console.log(currentDate);
+        var fiveDayForcastEls = document.querySelectorAll(".fiveday");
+        for (var i=0; i<fiveDayForcastEls.length;i++){
+           fiveDayForcastEls[i].innerHTML="";
+           var castIndex = i*8 + 4;
+         var forcastDate = new Date(response.list[castIndex].dt*1000);
+             var forcastDay = forcastDate.getDate();
+            var forcastMonth = forcastDate.getMonth() + 1;
+             var forcastYear = forcastDate.getFullYear();
+            $(".fiveday").attr("class", "mt-3 mb-0 forcast-date");
+            $(".fiveday").append(fiveDayForcastEls);
+            console.log(fiveDayForcastEls);
+         }
+
+        });
+      }
+      //localstorage.getItem() || [];
     </script>
   </body>
 </html>
