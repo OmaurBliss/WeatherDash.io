@@ -41,6 +41,14 @@
         >
           Search
         </button>
+        <button
+          id="clearhistory"
+          class="btn btn-outline-success my-2 my-sm-0"
+          data-weather="weather"
+          type="submit"
+        >
+          Clear History
+        </button>
         <span id="error"></span>
       </form>
     </nav>
@@ -55,6 +63,7 @@
           <div class="temp"></div>
           <div class="image"></div>
           <div class="description"></div>
+          
         </div>
       </div>
     </section>
@@ -75,6 +84,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
+
+
+function pageInit(){
+
+    var inputEl = document.querySelector("citysearch");
+    var searchEl = document.querySelector("submitweather");
+    var clearEl = document.querySelector("clearhistory")
       $("#submitweather").click(function (event) {
         event.preventDefault();
         var citySearch = $("#citysearch").val();
@@ -92,7 +108,7 @@
             url: queryURL,
             method: "GET",
           }).then(function (response) {
-          
+          console.log(response);
             console.log(queryURL);
             const currentDate = new Date (response.dt*1000);
             var day = currentDate.getDate();
@@ -129,6 +145,24 @@
             let descriptionTag = response.weather[0].description;
             Description.html(descriptionTag);
             $(".description").append(Description);
+            //UV index
+            var latt = response.coord.lat;
+            var lon = response.coord.lon;
+            var UVQueryURL = "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" + latt + "&lon=" + lon + "&APPID=166a433c57516f51dfab1f7edaed8413&cnt=1";
+            console.log(UVQueryURL);
+
+            $.ajax({
+            url: UVQueryURL,
+            method: "GET",
+          }).then(function (response){
+              console.log(response);
+              var UVIndex = $("<span>")
+            //UVIndex.setAttribute("class", "badge badge-danger");
+            UVIndex.innerHTML = response.data[0].value
+            UVIndex.innerHTML = "UV Index: "
+    $(".uvindex").append(UVIndex);
+console.log(UVIndex);
+          })
             fiveDay(citySearch);
             // }else {
             // $("#error").html(" field cannot be empty");
@@ -163,14 +197,19 @@
              var forcastDay = forcastDate.getDate();
             var forcastMonth = forcastDate.getMonth() + 1;
              var forcastYear = forcastDate.getFullYear();
+             var forcastHeader = forcastMonth + "/" + forcastDay + "/" + forcastYear;
             $(".fiveday").attr("class", "mt-3 mb-0 forcast-date");
-            $(".fiveday").append(fiveDayForcastEls);
-            console.log(fiveDayForcastEls);
+            $(".fiveday").html(forcastHeader);
+            $(".fiveday").append(forcastHeader);
+            console.log(forcastHeader);
+        
          }
 
         });
       }
+
       //localstorage.getItem() || [];
+    }
     </script>
   </body>
 </html>
