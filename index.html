@@ -86,11 +86,15 @@
     <script type="text/javascript">
 
 
-function pageInit(){
+// function pageInit(){
 
     var inputEl = document.querySelector("citysearch");
-    var searchEl = document.querySelector("submitweather");
-    var clearEl = document.querySelector("clearhistory")
+    var UVindexEl = document.querySelector("uvindex");
+    // var clearEl = document.querySelector("clearhistory");
+    // var historyEl = document.querySelector("history");
+    // var searchHist = JSON.parse(localStorage.getItem(inputEl)) || [];
+    // console.log(searchHist);
+
       $("#submitweather").click(function (event) {
         event.preventDefault();
         var citySearch = $("#citysearch").val();
@@ -149,19 +153,20 @@ function pageInit(){
             var latt = response.coord.lat;
             var lon = response.coord.lon;
             var UVQueryURL = "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" + latt + "&lon=" + lon + "&APPID=166a433c57516f51dfab1f7edaed8413&cnt=1";
-            console.log(UVQueryURL);
+            // console.log(UVQueryURL);
 
             $.ajax({
             url: UVQueryURL,
             method: "GET",
           }).then(function (response){
               console.log(response);
-              var UVIndex = $("<span>")
-            //UVIndex.setAttribute("class", "badge badge-danger");
-            UVIndex.innerHTML = response.data[0].value
-            UVIndex.innerHTML = "UV Index: "
-    $(".uvindex").append(UVIndex);
-console.log(UVIndex);
+//                var UVIndex = document.createElement("span");
+            
+//             UVIndex.setAttribute("class", "badge badge-danger");
+//              UVIndex.innerHTML = response.value
+//             UVindexEl.innerHTML = "UV Index: "
+//             UVindexEl.append(UVIndex);
+// console.log(UVIndex);
           })
             fiveDay(citySearch);
             // }else {
@@ -198,17 +203,54 @@ console.log(UVIndex);
             var forcastMonth = forcastDate.getMonth() + 1;
              var forcastYear = forcastDate.getFullYear();
              var forcastHeader = forcastMonth + "/" + forcastDay + "/" + forcastYear;
-            $(".fiveday").attr("class", "mt-3 mb-0 forcast-date");
-            $(".fiveday").html(forcastHeader);
-            $(".fiveday").append(forcastHeader);
-            console.log(forcastHeader);
-        
+            var forcastDateEl = document.createElement("p");
+            forcastDateEl.setAttribute("class", "mt-3 mb-0 forcast-date");
+            forcastDateEl.innerHTML = forcastHeader;
+            fiveDayForcastEls[i].append(forcastDateEl);
+            var forecastWeatherEl = document.createElement("img");
+            forecastWeatherEl.setAttribute("src","https://openweathermap.org/img/wn/" + response.list[castIndex].weather[0].icon + "@2x.png");
+            forecastWeatherEl.setAttribute("alt",response.list[castIndex].weather[0].description);
+            fiveDayForcastEls[i].append(forecastWeatherEl);
+            var forecastTempEl = document.createElement("p");
+                forecastTempEl.innerHTML = "Temp: " + response.list[castIndex].main.temp + " &#176F";
+                fiveDayForcastEls[i].append(forecastTempEl);
+                var forecastHumidityEl = document.createElement("p");
+                forecastHumidityEl.innerHTML = "Humidity: " + response.list[castIndex].main.humidity + "%";
+                fiveDayForcastEls[i].append(forecastHumidityEl);
          }
 
         });
       }
+      searchEl.addEventListener("click",function() {
+        var searchTerm = inputEl.value;
+        getWeather(searchTerm);
+        searchHistory.push(searchTerm);
+        localStorage.setItem("search",JSON.stringify(searchHistory));
+        renderSearchHistory();
+    })
+    clearEl.addEventListener("click",function() {
+        searchHistory = [];
+        renderSearchHistory();
+    })
+    function renderSearchHistory() {
+        historyEl.innerHTML = "";
+        for (let i=0; i<searchHistory.length; i++) {
+            const historyItem = document.createElement("input");
+            // <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com"></input>
+            historyItem.setAttribute("type","text");
+            historyItem.setAttribute("readonly",true);
+            historyItem.setAttribute("class", "form-control d-block bg-white");
+            historyItem.setAttribute("value", searchHistory[i]);
+            historyItem.addEventListener("click",function() {
+                getWeather(historyItem.value);
+            })
+            historyEl.append(historyItem);
+        }
+    }
 
-      //localstorage.getItem() || [];
+    renderSearchHistory();
+    if (searchHistory.length > 0) {
+        getWeather(searchHistory[searchHistory.length - 1]);
     }
     </script>
   </body>
