@@ -1,0 +1,23 @@
+.navbar-brand {
+    font-size: 36px;
+}
+
+.search-header {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.city-name {
+    font-size: 30px;
+}
+
+.forecast-date {
+    font-size: 18px;
+}
+ .jumbotron {
+    background-color: rgb(36, 34, 143);
+    color: white;
+    text-align: center;
+    border-bottom: 3px solid black;
+    box-shadow: 0 40px 60px 0 rgba(28, 28, 28, 0.4);
+} 
