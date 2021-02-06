@@ -11,6 +11,11 @@
 //THEN I am again presented with current and future conditions for that city
 //WHEN I open the weather dashboard
 //THEN I am presented with the last searched city forecast
+//Local storage
+var inputEl = document.querySelector("city-input");
+var clearEl = document.querySelector("clear-history");
+var historyEl = document.querySelector("history");
+var searchHist = JSON.parse(localStorage.getItem(inputEl)) || [];
 
 $("#search-button").click(function (event) {
   event.preventDefault();
@@ -18,6 +23,7 @@ $("#search-button").click(function (event) {
   // console.log(citySearch);
   // if (citySearch != "") {
 
+  
   var APIKey = "&APPID=166a433c57516f51dfab1f7edaed8413";
 
   // Here we are building the URL we need to query the database
@@ -80,15 +86,21 @@ $("#search-button").click(function (event) {
         latt +
         "&lon=" +
         lon +
-        "&APPID=" +
         APIKey;
       console.log(UVQueryURL);
 
       $.ajax({
         url: UVQueryURL,
         method: "GET",
-      }).then(function (response) {
-        console.log(response);
+      }).then(function (uvIndex) {
+        console.log(uvIndex);
+
+        var uvIndexDisplay = $("<button>");
+        uvIndexDisplay.addClass("btn btn-danger");
+
+        $("#UV-index").text("UV Index: ");
+        $("#UV-index").append(uvIndexDisplay.text(uvIndex[0].value));
+        console.log(uvIndex[0].value);
       });
       fiveDay(citySearch);
       //     // }else {
@@ -139,7 +151,3 @@ function fiveDay(citySearch) {
   });
 }
 
-// Log the data in the console as well
-// console.log("Wind Speed: " + response.wind.speed);
-// console.log("Humidity: " + response.main.humidity);
-// console.log("Temperature (F): " + tempF);
