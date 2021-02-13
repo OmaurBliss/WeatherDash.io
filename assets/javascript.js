@@ -188,4 +188,4 @@ renderSearchHistory();
 if (searchHist.length > 0) {
   getWeather(searchHist[searchHist.length - 1]);
 }
-$("#input").on("click", getWeather);
+
