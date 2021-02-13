@@ -12,102 +12,109 @@
 //WHEN I open the weather dashboard
 //THEN I am presented with the last searched city forecast
 //Local storage
-var inputEl = document.querySelector("city-input");
-var clearEl = document.querySelector("clear-history");
-var historyEl = document.querySelector("history");
-var searchHist = JSON.parse(localStorage.getItem(inputEl)) || [];
+var inputEl = document.querySelector("#city-input");
+var clearEl = document.querySelector("#clear-history");
+var searchEl = document.querySelector("#search-button");
+var historyEl = document.querySelector("#history");
+var searchHist = JSON.parse(localStorage.getItem("search")) || [];
 
-$("#search-button").click(function (event) {
-  event.preventDefault();
+$("#search-button").on("click", getWeather);
+
+function getWeather() {
+  //event.preventDefault();
   var citySearch = $("#city-input").val();
-  // console.log(citySearch);
-  // if (citySearch != "") {
 
-  
-  var APIKey = "&APPID=166a433c57516f51dfab1f7edaed8413";
+  if (citySearch != "") {
+    //   var inputEl = document.querySelector("#city-input");
+    //   var searchHist = JSON.parse(localStorage.getItem(inputEl)) || [];
 
-  // Here we are building the URL we need to query the database
-  var queryURL =
-    "https://api.openweathermap.org/data/2.5/weather?q=" + citySearch + "&units=imperial" + APIKey;
+    var APIKey = "&APPID=166a433c57516f51dfab1f7edaed8413";
 
-  // Here we run our AJAX call to the OpenWeatherMap API
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-  })
-    // We store all of the retrieved data inside of an object called "response"
-    .then(function (response) {
-      // Log the queryURL
-      console.log(queryURL);
+    // Here we are building the URL we need to query the database
+    var queryURL =
+      "https://api.openweathermap.org/data/2.5/weather?q=" +
+      citySearch +
+      "&units=imperial" +
+      APIKey;
 
-      // Log the resulting object
-      console.log(response);
+    // Here we run our AJAX call to the OpenWeatherMap API
+    $.ajax({
+      url: queryURL,
+      method: "GET",
+    })
+      // We store all of the retrieved data inside of an object called "response"
+      .then(function (response) {
+        // Log the queryURL
+        console.log(queryURL);
 
-      // Transfer content to HTML
+        // Log the resulting object
+        console.log(response);
 
-      $("#city-name").html("<h1>" + response.name + " Weather Details</h1>");
-      $("#wind-speed").text("Wind Speed: " + response.wind.speed);
-      $("#humidity").text("Humidity: " + response.main.humidity);
+        // Transfer content to HTML
 
-      // Convert the temp to fahrenheit
-      var tempF = (response.main.temp - 273.15) * 1.8 + 32;
+        $("#city-name").html("<h1>" + response.name + " Weather Details</h1>");
+        $("#wind-speed").text("Wind Speed: " + response.wind.speed);
+        $("#humidity").text("Humidity: " + response.main.humidity);
 
-      // add temp content to html
-      $("#temperature").text("Temperature (F) " + response.main.temp);
-      // $("#temperature").text("Temperature (F): " + tempF.toFixed(2));
+        // Convert the temp to fahrenheit
+        var tempF = (response.main.temp - 273.15) * 1.8 + 32;
 
-      //add date to current weather
-      const currentDate = new Date(response.dt * 1000);
-      var day = currentDate.getDate();
-      var month = currentDate.getMonth() + 1;
-      var year = currentDate.getFullYear();
-      var dateHeader = month + "/" + day + "/" + year;
-      $("#current-date").text(dateHeader);
-      console.log(dateHeader);
+        // add temp content to html
+        $("#temperature").text("Temperature (F) " + response.main.temp);
+        // $("#temperature").text("Temperature (F): " + tempF.toFixed(2));
 
-      //weather icon
+        //add date to current weather
+        const currentDate = new Date(response.dt * 1000);
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1;
+        var year = currentDate.getFullYear();
+        var dateHeader = month + "/" + day + "/" + year;
+        $("#current-date").text(dateHeader);
+        console.log(dateHeader);
 
-      var weatherIcon = response.weather[0].icon;
-      var imageURL = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png";
-      var currentPic = $("#current-pic").attr("src", imageURL, "alt", "weather icon");
-      $("#current-pic").append(currentPic);
-      console.log(currentPic);
-      // weather description
+        //weather icon
 
-      var descriptionTag = response.weather[0].description;
-      var descripT = $("#description").html(descriptionTag);
-      $(".description").append(descripT);
-      // UV index
-      var latt = response.coord.lat;
-      var lon = response.coord.lon;
+        var weatherIcon = response.weather[0].icon;
+        var imageURL = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png";
+        var currentPic = $("#current-pic").attr("src", imageURL, "alt", "weather icon");
+        $("#current-pic").append(currentPic);
+        console.log(currentPic);
+        // weather description
 
-      var UVQueryURL =
-        "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" +
-        latt +
-        "&lon=" +
-        lon +
-        APIKey;
-      console.log(UVQueryURL);
+        var descriptionTag = response.weather[0].description;
+        var descripT = $("#description").html(descriptionTag);
+        $(".description").append(descripT);
+        // UV index
+        var latt = response.coord.lat;
+        var lon = response.coord.lon;
 
-      $.ajax({
-        url: UVQueryURL,
-        method: "GET",
-      }).then(function (uvIndex) {
-        console.log(uvIndex);
+        var UVQueryURL =
+          "https://api.openweathermap.org/data/2.5/uvi/forecast?lat=" +
+          latt +
+          "&lon=" +
+          lon +
+          APIKey;
+        console.log(UVQueryURL);
 
-        var uvIndexDisplay = $("<button>");
-        uvIndexDisplay.addClass("btn btn-danger");
+        $.ajax({
+          url: UVQueryURL,
+          method: "GET",
+        }).then(function (uvIndex) {
+          console.log(uvIndex);
 
-        $("#UV-index").text("UV Index: ");
-        $("#UV-index").append(uvIndexDisplay.text(uvIndex[0].value));
-        console.log(uvIndex[0].value);
+          var uvIndexDisplay = $("<button>");
+          uvIndexDisplay.addClass("btn btn-danger");
+
+          $("#UV-index").text("UV Index: ");
+          $("#UV-index").append(uvIndexDisplay.text(uvIndex[0].value));
+          console.log(uvIndex[0].value);
+        });
+        fiveDay(citySearch);
       });
-      fiveDay(citySearch);
-      //     // }else {
-      //     // $("#error").html(" field cannot be empty");
-    });
-});
-
+  } else {
+    $("#error").html(" field cannot be empty");
+  }
+}
 //Five day forcast
 function fiveDay(citySearch) {
   var queryFiveDayURL =
@@ -150,4 +157,35 @@ function fiveDay(citySearch) {
     }
   });
 }
+searchEl.addEventListener("click", function () {
+  var searchTerm = inputEl.value;
+  getWeather(searchTerm);
+  searchHist.push(searchTerm);
+  localStorage.setItem("search", JSON.stringify(searchHist));
+  renderSearchHistory();
+});
+clearEl.addEventListener("click", function () {
+  searchHist = [];
+  renderSearchHistory();
+});
+function renderSearchHistory() {
+  historyEl.innerHTML = "";
+  for (let i = 0; i < searchHist.length; i++) {
+    var historyItem = document.createElement("input");
 
+    historyItem.setAttribute("type", "text");
+    historyItem.setAttribute("readonly", true);
+    historyItem.setAttribute("class", "form-control d-block bg-white");
+    historyItem.setAttribute("value", searchHist[i]);
+    historyItem.addEventListener("click", function () {
+      getWeather(historyItem.value);
+    });
+    historyEl.append(historyItem);
+  }
+}
+
+renderSearchHistory();
+if (searchHist.length > 0) {
+  getWeather(searchHist[searchHist.length - 1]);
+}
+$("#input").on("click", getWeather);
